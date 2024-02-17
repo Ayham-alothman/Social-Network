@@ -1,0 +1,60 @@
+<%- include('part/header')  %>
+
+<input type="hidden" id="chatid" value=<%=chatid %>>
+
+<input type="hidden" id="id" value=<%=id %>>
+
+<% if (mesages) { %>
+ 
+
+
+
+
+<% } %>
+
+
+
+<textarea name="" id="textarea" cols="30" rows="10">
+
+
+</textarea>
+
+<button id="btn" onclick="send()" >
+send
+
+</button>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+
+  let chatid= document.getElementById('chatid').value
+  let id= document.getElementById('id').value
+
+  let btn=document.getElementById('btn')
+
+const socket=io();
+socket.emit('init',chatid)
+
+
+
+socket.on('connect',()=>{
+
+    socket.on('newmsg',data=>{console.log(data)})
+
+})
+
+
+
+send=()=>{
+  let msg=document.getElementById('textarea').value;  
+  
+    socket.emit('msg',{chatid:chatid,value:msg,id:id});
+
+}
+
+</script>
+
+<%- include('part/footer')  %> 

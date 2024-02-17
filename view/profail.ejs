@@ -1,0 +1,134 @@
+<%- include('part/header') %>
+<h1 ><%= data.name %> </h1>
+
+<input type="hidden" id="myid" value=<%=mydata.id %>>
+<input type="hidden" id="myname" value=<%=mydata.name %>>
+<input type="hidden" id="myemail" value=<%=mydata.email %>>
+<input type="hidden" id="myfriends" value=<%=mydata.friends %>>
+
+<input type="hidden" id="idfriend" value=<%= data.id %>>
+<input type="hidden" id="emailfriend" value=<%= data.email %>   >
+<input type="hidden" id="namefriend" value=<%= data.name %>   >
+<input type="hidden" id="namefriends" value=<%= data.friends %>   >
+
+
+<% if (data.state=='me') { %>
+    <p>my page</p>
+   <% } %> 
+
+<% if (data.state=='friend') { %>
+ <p>your are friends</p>
+<form action="/friend/delete" method="post">
+    <pre>
+        <input type="hidden" name="id" value=<%= data.id %>>
+                <input type="submit" value="deletefriend">
+    </pre>
+</form>
+
+<% } %> 
+
+<% if (data.state=='sendrequest') { %>
+    <p>he send request friend</p>
+    <form action="/friend/submite" method="post">
+        <pre>
+            <input type="hidden" name="id" value=<%= data.id %>>
+            <input type="hidden" name="emailfriend" value=<%= data.email %>   >
+            <input type="hidden" name="name" value=<%= data.name %>   >
+            <input type="hidden" name="friends" value=<%= data.friends %>   >
+            
+            <input type="submit" value="submite">
+        </pre>
+    </form>
+
+    <form action="/friend/cancelsubmite" method="post">
+        <pre>
+        
+         <input type="hidden" name="id" value=<%= data.id %>   >
+            <input type="submit" value="cancel">
+        </pre>
+    </form>
+
+   <% } %> 
+
+<% if (data.state=='receiverequest') { %>
+    <p>you send request friend</p>      
+    <form action="/friend/cancel" method="post">
+        <pre>
+         
+            <input type="hidden" name="id" value=<%= data.id %>   >
+            <input type="submit" value="cancelrequest">
+        </pre>
+    </form>
+   <% } %> 
+
+<% if (data.state=='nofriend') { %>
+    <p>your are not friends</p>
+   <button id="submitaddfriend" onclick="send()">addfriend</button>
+   <% } %> 
+
+ 
+
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+
+console.log(document.getElementById('idfriend').value,)   
+console.log(document.getElementById('myid').value)
+
+let datafriend={
+id:document.getElementById('idfriend').value,
+name:document.getElementById('namefriend').value,
+email:document.getElementById('emailfriend').value,
+friends:document.getElementById('namefriends').value,
+
+}
+ 
+let mydata={
+id:document.getElementById('myid').value,
+name:document.getElementById('myname').value,
+email:document.getElementById('myemail').value,
+friends:document.getElementById('myfriends').value,
+
+}
+
+
+   const socket=io();
+   socket.emit('notfiction',mydata.id)
+
+   send=()=>{
+       
+socket.emit('addfriend',{datafriend:datafriend,mydata:mydata})
+     
+   }//end send
+
+socket.on('connect',()=>{
+    socket.on('not',(d)=>{
+        console.log(d)
+        
+    })
+
+    socket.on('reload',(d)=>{
+        location.reload()
+        
+    })
+
+
+})
+  
+
+  
+
+    
+  
+
+
+   //const socket=io();
+   //socket.on('connect',()=>{
+//
+//
+//
+   //})
+   
+     
+
+   </script>
+<%- include('part/footer') %> 

@@ -1,0 +1,87 @@
+<%- include('part/header')  %> 
+
+<input type="hidden" id="myid" value=<%=id %>>
+<p><%=id %> </p>
+<p><%=name %> </p>
+<h1>request recives</h1>
+
+<form action="/request" method="get">
+<input type="submit" value="getallrequests">
+
+</form>
+
+<% if (data) { %>
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<div>
+    
+    <% for( let ele of data ) { %>
+        <div>
+            ############
+    <a href="/profail/<%=ele.id  %> "><p><%=ele.name  %> </p></a>
+    
+    <p><%=ele.email  %></p>
+    ############
+</div>
+    
+    <% } %>
+    
+    
+   
+    </div>
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<% } %>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let myid=document.getElementById('myid').value;
+    
+    const socket=io()
+
+      
+   
+    socket.on('connect',()=>{
+        console.log(myid)
+        //#################
+        socket.emit('notfiction',myid) 
+        //#################
+        socket.on('not',(d)=>{
+            
+        console.log(d)
+        
+              })
+          //#################
+        
+    //socket.on('not',(data)=>{
+    //        
+    //    console.log(`ths data is from ${data}`)})
+
+    //#################
+    socket.emit('isonline',myid)
+    //#################
+    socket.on('dis',()=>{
+    socket.emit('getallonline',myid)
+        
+   })
+  //#################
+   socket.on('add',()=>{
+    socket.emit('getallonline',myid)
+
+   })// end add
+   //#################
+
+   socket.on("friendonline",(data)=>{   
+
+    console.log(`this data is online ${data}`)
+    console.log(data)
+   })//end friennd online
+        
+   //#################
+
+   
+    })  //end conneted
+   
+
+</script>
+
+<%- include('part/footer')  %> 
