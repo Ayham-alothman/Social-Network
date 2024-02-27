@@ -49,16 +49,18 @@ isnotAdmin=(req,res,next)=>{
 
 
     istoken=(req,res,next)=>{
+         if(req.header('authorization')){
+            let infouser=jwt.verify(req.header('authorization'),process.env.SecrtKey);
+            req.user=infouser;
+            next()
 
-        if(req.cookies.token){
+         }
+        else if(req.cookies.token){
+            cons    .console.log((req));
         
             let token=req.cookies.token;
 
-            //console.log(`*******************
-            //${token}
-            //***********************`)
-           
-          //console.log(token);
+            
         
             let infouser=jwt.verify(token,process.env.keyjwt);
             req.user=infouser;
@@ -69,7 +71,7 @@ isnotAdmin=(req,res,next)=>{
         
         }
         else{
-            res.redirect('/login')
+            res.status(403).json(`do't found token`)
         }
         }
         

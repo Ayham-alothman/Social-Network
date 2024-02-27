@@ -1,8 +1,46 @@
-const mongo =require('mongodb').MongoClient;
+const { MongoClient } = require("mongodb");
+
 const { promise } = require('bcrypt/promises');
 const { ObjectId } = require('mongodb');
 const url= 'mongodb://127.0.0.1:27017';
 
+async function Add(myid,id){
+    const Client = new MongoClient(process.env.Url);
+   try{
+    const Db= Client.db('chatapp');
+    const Coll=  Db.collection('users');
+    const query={_id:ObjectId(id)};
+    const Result=await Coll.findOne(query);
+    if(Result){
+       
+        if(Result.friends.includes(myid)||Result.sendrequest.includes(myid)||Result.receivererequest.includes(myid)){
+            
+            return 403;
+        }          
+        await Coll.updateOne({_id:ObjectId(id)},{$push:{receivererequest:myid}});
+        await Coll.updateOne({_id:ObjectId(myid)},{$push:{sendrequest:id}});
+        return 200;
+        
+    }
+    
+   }
+   catch(e){return e}
+   finally{ await Client.close()}
+
+    
+}//end Add
+
+async function cnacelRequest(myid,id){
+    const Client= await MongoClient.connect(process.env.Url);
+    try{
+        const Db= Client.db(`chatapp`);
+        const Coll=await Db.collection(`users`);
+        
+
+    }
+    catch(e){return e}
+    finally{await Client.close()}
+}//end cnacelRequest
 
 
 addfriend=(id,myid)=>{
@@ -251,4 +289,4 @@ getfriend=(myid)=>{
 
 
 
-    module.exports={addfriend,acceptrequest,cancelrequest,cancelsubmite,getfriend,deletefriend}
+    module.exports={Add,addfriend,acceptrequest,cancelrequest,cancelsubmite,getfriend,deletefriend}

@@ -1,58 +1,30 @@
 const mongo =require('mongodb').MongoClient;
 const { ObjectId } = require('mongodb');
 
-const url= 'mongodb://127.0.0.1:27017';
+
 getdataid=(id,myid)=>{
-    
+        
 return new Promise((resolve,reject)=>{
-mongo.connect(url,(err,client)=>{
+mongo.connect(process.env.Url,(err,client)=>{
 if(err) throw err;
+if(id.length!=24){reject(`id user do't found`);return 0;}
 
 const db=client.db('chatapp');
 
-db.collection('users').findOne({_id:ObjectId(id)}).then((data)=>{
-let state;
+db.collection('users').findOne({_id:ObjectId(id)})
+.then((data)=>{
+    let objectData={name:data.name}
+if(id===myid.id){resolve( {state:1,data:objectData} );}
+else if(data.friends.find(ele=>{ if(ele.id==myid.id){return true} })){resolve({state:2,data:objectData})}
 
-if(id===myid.id){state='me'}
-else if(data.friends.find(ele=>{
-    if(ele.id==myid.id){
-        return true
-    }
-})){state='friend'}
+else if(data.receivererequest.find(ele=>{if(ele.id==myid.id){return true}})){resolve({state:3,data:objectData})}
 
-else if(data.receivererequest.find(ele=>{
-    if(ele.id==myid.id){
-        return true
-    }
-})){state='receiverequest'}
+else if(data.sendrequest.find(ele=>{ if(ele.id==myid.id){return true}})){resolve({state:4,data:objectData})}
 
-else if(data.sendrequest.find(ele=>{
-    if(ele.id==myid.id){
-        return true
-    }
-})){state='sendrequest'}
+else{ resolve({state:5,data:objectData}) }
 
-else{
-    state='nofriend'
-}
-
-
-
-
-//if(data._id===myid){state='me'}
-//if(data.friends.includes(myid)){state='friend'}
-//
-//if(data.receivererequest.includes(myid)){state=`receiverequest`;console.log('myid send id')}
-//if(data.sendrequest.includes(myid)){state=`sendrequest`;console.log('id send myid')}
-//if(!data.sendrequest.includes(myid)&&!data.receivererequest.includes(myid)
-//&&!data.friends.includes(myid)){
-//    state="nofriend"
-//}
-data.state=state;
-
-resolve(data);
-
-}).catch((err)=>{reject(Error(err))})
+})
+.catch((err)=>{reject(`id user do't found`)})
 
 
 })

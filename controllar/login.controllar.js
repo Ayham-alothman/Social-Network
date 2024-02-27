@@ -31,7 +31,7 @@ let ob={
 
    // res.status(200).cookie('token',token).redirect('/');
 
-}).catch((err)=>{console.log(err);res.status(400).end()})
+}).catch((err)=>{ console.log(err); res.status(400).json({err})})
 
 }//end function
 

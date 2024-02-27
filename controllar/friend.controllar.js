@@ -1,15 +1,21 @@
-const model=require('../model/friend.model')
+const model=require('../model/friend.model');
+const {Add}=require('../model/friend.model');
+
 
 
 
 addfriend=(req,res)=>{
+//console.log(req.body.id);
+//console.log(req.user.id)
 
-console.log('this funcion do not work  @@@@@@ rembar')
-
-model.addfriend(req.body.id,ob).then(()=>{
-//res.redirect('/profail/:id')
-
+Add(req.user.id,req.body.id)
+.then((d)=>{
+    if(d==200){res.status(200).end()}
+    else if(d==403){res.status(403).json(`there problem in request`)}
 })
+.catch((e)=>{res.status(403).json(e)})
+
+
 
 }//end function
 

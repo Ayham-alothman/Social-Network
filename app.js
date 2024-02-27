@@ -1,6 +1,5 @@
 
 
-
 const express = require('express');
 
 const app = express();
@@ -72,12 +71,18 @@ app.use('/login',login)
 app.use('/profail',profail)
 app.use('/friend',friend)
 app.use('/request',requests)
-app.use('/chat',chat)       
+app.use('/chat',chat)     
+app.use('/try',(req,res)=>{
+    console.log('try');
+    
+    res.end();
+    
+})  
 //e excute module
 
 
 
-const port= 3000;
+const port= 4000;
 
 server.listen(port,(err)=>{
 if(err){console.log(Error(err))}

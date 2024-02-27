@@ -1,10 +1,7 @@
+const jwt=require('jsonwebtoken')
 const model=require('../model/signup.model')
 
-viewsignup=(req,res)=>{
-
-res.render('signup')
-
-}
+viewsignup=(req,res)=>{  res.render('signup')   }
 
 
 senddatasignup=(req,res)=>{
@@ -14,7 +11,9 @@ password:req.body.password,
 email:req.body.email,
 
 }
-model.insertdatatousers(mydata)
+ const token= jwt.sign(mydata,process.env.SecrtKey)
+model.insertdatatousers(mydata).then((d)=>{res.status(200).json(token)})
+.catch((e)=>{res.status(403).json({e:e})})
 }
 
 

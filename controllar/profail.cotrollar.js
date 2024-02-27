@@ -1,31 +1,19 @@
 const model=require('../model/profail.model')
 
 
-getdata=(req,res)=>{
+getdata=(req,res)=>{console.log(req.params.id);
+    console.log(req.user);
 
-model.getdataid(req.params.id,req.user).then((d)=>{
+model.getdataid(req.params.id,req.user)
+.then((d)=>{console.log(d.status)
 
-let data={
-    id:d._id,
-    name:d.name,
-    email:d.email,
-    friends:d.friends,
-    state:d.state
-};
+res.status(200).json(d);
 
 
-let mydata={
-    id:req.user.id,
-    name:req.user.name,
-    email:req.user.email,
-    friends:req.user.friends,
-}
-
-res.render('profail',{data:data,mydata:mydata})
-}).catch((err)=>{console.log(err)})
+})
+.catch((err)=>{res.status(403).json(err);})
 
 }
 
 
 module.exports={getdata}
-//
