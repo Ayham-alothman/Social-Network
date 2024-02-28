@@ -1,12 +1,10 @@
-const model=require('../model/friend.model');
-const {Add}=require('../model/friend.model');
+const {Add,cnacelRequest,acceprRequest,rejectRequest,deleteFriend}=require('../model/friend.model');
 
 
 
 
 addfriend=(req,res)=>{
-//console.log(req.body.id);
-//console.log(req.user.id)
+
 
 Add(req.user.id,req.body.id)
 .then((d)=>{
@@ -20,55 +18,67 @@ Add(req.user.id,req.body.id)
 }//end function
 
 
+cancelRequestContollar=(req,res)=>{
+
+    if(req.user.id&&req.body.id){
+        cnacelRequest(req.user.id,req.body.id)
+        .then((d)=>{console.log(d)
+            if(d==200){console.log('set200');res.status(200).end();}
+            else if(d!=200){res.status(403).end();}
+        })
+        .catch((e)=>{res.status(403).json(e)})
+    }
+    else if(!req.user.id||!req.body.id){
+        res.status(400).json(`there miss data`)
+    }
+
+    
+}
+
+
 acceptrequest=(req,res)=>{
-//    req.body.friends.split(',')
-//    let ob={
-//id:req.user.id,
-//name:req.user.name,
-//email:req.user.email,
-//friends:req.user.friends,   
-//    }
-//
-// console.log(req.body) 
+    if(req.user.id&&req.body.id){
+        acceprRequest(req.user.id,req.body.id)
+        .then((d)=>{
+            if(d==200){res.status(200).end()}
+            else if(d!=200){res.status(403).json(`there miss data`)}
+        })
+        .catch((e)=>{res.status(403).json(e)})
+    }
+    else if(!req.user.id||!req.body.id){res.status(400).json(`there miss data`)}
 
 
-model.acceptrequest(req.body.id,req.user).then(()=>{
+}//end fun
 
-    res.redirect(`/profail/${req.body.id}`)
-})
-
-}
-
-cancelrequest=(req,res)=>{
-
-
-
-    model.cancelrequest(req.body.id,req.user).then(()=>{
-        res.redirect(`/profail/${req.body.id}`)
-
-    })
-
-
-}
 
 cancelsubmite=(req,res)=>{
+    if(req.user.id&&req.body.id){
+        rejectRequest(req.user.id,req.body.id)
+        .then((d)=>{d==200? res.status(200).end()  :res.status(403).json(`there miss data`)})
+        .catch((e)=>{res.status(403).json(e)})
+    }
+    else if(!req.user.id||req.body.id){
+        res.status(403).json(`there miss data`)
+    }
 
-    model.cancelsubmite(req.body.id,req.user).then(()=>{
-        res.redirect(`/profail/${req.body.id}`)
-
-    })
-
+    
 
 }
 
 deletefriend=(req,res)=>{
- 
-model.deletefriend(req.body.id,req.user).then(()=>{
+ if(req.user.id&&req.body.id){
+    deleteFriend(req.user.id,req.body.id)
+    .then((d)=>{
+        d==200? res.status(200).end():res.status(403).end();
+    })
+    .catch((e)=>{res.status(403).json(e)})
+ }
+ else if(!req.user.id||!req.body.id) {
+    res.status(400).json(`there data missed`)
+ }
 
-    res.redirect(`/profail/${req.body.id}`)
-})
 
 
-}
+}//end fun
 
-module.exports={addfriend,acceptrequest,cancelrequest,cancelsubmite,deletefriend}
+module.exports={addfriend,acceptrequest,cancelsubmite,deletefriend,cancelRequestContollar}
