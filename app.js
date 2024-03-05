@@ -1,48 +1,32 @@
 
-
 const express = require('express');
-
 const app = express();
-const cors=require('cors');
+app.use(express.json());
 
-const jwt=require('jsonwebtoken')
-
-const cookies=require('cookie-parser');
-
-app.use(express.json())
-
-app.use(cookies())
-
-//console.log(cookies.parse())
-
-
-
+const cors=require('cors')
 
 
 app.set('view engine','ejs')
 app.set('views','view')
 
-let dotenv=require('dotenv').config();
-
-    const body=require('body-parser');
-    
+const dotenv=require('dotenv').config();
+const body=require('body-parser');
+   
     //app.use(body.json());
 
-    app.use(body.urlencoded({extended:true}));
+app.use(body.urlencoded({extended:true}));
 
 app.use(cors({origin:'*'}))
 
-const session=require('express-session');
-app.use(session({
-    secret: "my secret",
-    saveUninitialized:false,
-    resave:false
-}))
 
- const server= require('http').createServer(app)
+
+const server= require('http').createServer(app)
 const socket=require('socket.io');
 
-const io=socket(server);
+const io=socket(server,{
+    cors:{origin:'*'},
+});
+
 io.allonline={}
 
 require('./socket.io/chat.socket')(io)
@@ -74,8 +58,8 @@ app.use('/request',requests)
 app.use('/chat',chat)     
 app.use('/try',(req,res)=>{
     console.log('try');
-    
-    res.end();
+    console.log(req.body.id)
+    res.status(200).end();
     
 })  
 //e excute module

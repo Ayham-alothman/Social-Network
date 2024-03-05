@@ -56,7 +56,7 @@ isnotAdmin=(req,res,next)=>{
 
          }
         else if(req.cookies.token){
-            cons    .console.log((req));
+            console.log((req));
         
             let token=req.cookies.token;
 

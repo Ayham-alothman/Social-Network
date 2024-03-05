@@ -4,14 +4,18 @@
     io.on('connection', socket=>{
       
         
-           socket.on('isonline',(id)=>{
+           socket.on('isonline',(id)=>{ 
           
-        io.allonline[id]=true;
+           io.allonline[id]=true;
+           console.log(io.allonline);
+           io.emit(`newuser`);
+           
+           
         
-        io.emit('add')
-        
-          socket.on('disconnect',()=>{
-            io.allonline[id]=false;
+           socket.on('disconnect',()=>{console.log(`out`)
+           console.log(io.allonline);
+            delete io.allonline[id];
+            console.log(io.allonline);
             io.emit('dis')
       
           })//end disconnected
@@ -22,3 +26,4 @@
                   
    })//end functions on
 }//end function
+

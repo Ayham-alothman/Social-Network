@@ -14,16 +14,16 @@ res.status(200).render('login',{id:false,token:false})
 conlogin=(req,res)=>{
     
     
-console.log(req.body)
+
 con.surelogin(req.body).then((data)=>{
-console.log('true')
+
 let ob={
     id:data._id,name:data.name,email:data.email,friends:data.friends,
     sendreq:data.sendrequest,receivereq:data.receivererequest
 }
-    console.log(process.env.SecrtKey);
+    
     const token=jwt.sign(ob,process.env.SecrtKey)
-    console.log(token)
+    
    
     res.status(200).setHeader('Access-Control-Expose-Headers','*')
     .setHeader('content-type','application/json')

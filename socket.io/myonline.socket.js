@@ -1,35 +1,20 @@
-
-    const getallfriend=require('../model/friend.model').getfriend
+const {getFriends}=require('../model/friend.model')
+   
 module.exports= io=>{    
-    io.on('connection', socket=>{
+    io.on('connection',socket=>{    
+        socket.on('onlineFriends',(id)=>{
+            if(id&&id.length>10){
+                getFriends(id)
+                .then((d)=>{
+                    d=d.filter((e)=>{
+                        if(io.allonline[e._id]==true){return e;}
+                    });
+                    socket.emit(`friendsOnline`,d);
+                })
+                .catch((e)=>{console.log(e)})
 
-
-        socket.on('getallonline',(id)=>{
-            //console.log(`the request getallonline`)
-            //console.log(io.allonline)
-              
-            getallfriend(id).then((data)=>{
-     
-
-                let online=data.filter((ele)=>{
-                    if(io.allonline[ele.id]==true){
-                        
-                    return ele
-                    
-                    }
-                    
-                    })//end fulter
-                   //console.log(`online now `);
-                   //console.log(online);
-                   socket.emit("friendonline",online)
-    
-
-            })//end function getallfriend653
-
-         
-          })//end getallonline
-
-    
+            }
+        })
     })// end function on 
 
-    }//end functions
+}//end functions

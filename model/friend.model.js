@@ -117,7 +117,39 @@ async function deleteFriend(myid,id){
     finally{await Client.close()}
 }//end fun
 
+async function getFriends(id){
+    const Client=new MongoClient(`mongodb://127.0.0.1:27017`);
+    try{
+        const Db=await Client.db(`chatapp`);
+        const Coll=await Db.collection(`users`);
+        const pipLine=[
+             {$match:{_id:ObjectId(id)}}
+            ,{$unwind:'$friends'}
+            ,{$project:{friends:{$toObjectId:"$friends"},_id:0}}
+            ,{$lookup:{from:'users',localField:'friends',foreignField:'_id',as:'dataFriend'}}
+            ,{$project:{friends:0}}];
+
+        const Data= await Coll.aggregate(pipLine).toArray();
+        const dataFriends=[];
+        for(let i=0;i<Data.length;i++){
+            delete Data[i].dataFriend[0].password;
+            delete Data[i].dataFriend[0].friends;
+            delete Data[i].dataFriend[0].sendrequest;
+            delete Data[i].dataFriend[0].receivererequest;
+            Data[i].dataFriend[0]._id=Data[i].dataFriend[0]._id.toString();
+            
+            dataFriends.push(Data[i].dataFriend[0])
+
+        }
+        return dataFriends
+
+    }
+    catch(e){return e}
+    finally{await Client.close();}
+}//end fun
 
 
 
-    module.exports={Add,cnacelRequest,acceprRequest,rejectRequest,deleteFriend}
+
+
+    module.exports={Add,cnacelRequest,acceprRequest,rejectRequest,deleteFriend,getFriends}
