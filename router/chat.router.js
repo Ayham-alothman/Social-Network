@@ -1,11 +1,12 @@
 const auth=require('../protect/athu')
-const con=require('../controllar/chat.controllar')
+const {getallmessages,getChatsControllar}=require('../controllar/chat.controllar')
 
 const express=require('express');
 
 const router=express.Router();
 
-router.get('/:chatid',auth.istoken,con.getallmessages);
+router.get('/:id',auth.istoken,getallmessages);
+router.get('/',auth.istoken,getChatsControllar);
 
 
 module.exports=router;

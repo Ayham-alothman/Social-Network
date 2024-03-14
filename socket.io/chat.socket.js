@@ -1,30 +1,22 @@
-const ID=require('mongodb').ObjectId
-
-
-const savemassage= require('../model/savemessages.model').savemesages
-
-
+const {saveMessages}=require('../model/message.model')
 module.exports=(io)=>{
 io.on('connection',socket=>{
 
- //#############   
-socket.on('init',data=>{
-socket.join(data)
+  
+socket.on('init',chatId=>{socket.join(chatId);});
 
-})
-//#############
-socket.on('msg',datamsg=>{
-        
-    socket.broadcast.to(datamsg.chatid).emit('newmsg',datamsg.value);
 
-let msg={
-chatid:datamsg.chatid,
-content:datamsg.value,
-sender:ID(datamsg.id),
-date:new Date(new Date().getTime()),
+socket.on('sendmessage',datamsg=>{
+     saveMessages(datamsg)
+     .then(()=>{
+        socket.broadcast.to(datamsg.chatid).emit('receivemessage',datamsg);  
+     })
+     .catch((e)=>{console.log(e)})
+    
+   // socket.broadcast.to(datamsg.chatid).emit('newmsg',datamsg.value);
 
-}
-savemassage(msg);
+
+
 
     
     })

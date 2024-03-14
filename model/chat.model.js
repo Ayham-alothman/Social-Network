@@ -1,61 +1,49 @@
+const { Collection } = require('mongo');
+const {MongoClient,ObjectId} =require('mongodb');
 
-
-const mongo =require('mongodb').MongoClient;
-
-const obid =require('mongodb').ObjectId;
-
-
-
-// id => idchat
-//collaction message {
-// _id,
-//  chat:{id=>  [iduser1=>{},iduser2=>{}]              }
-//   content,
-//     data
-//
-//
-//     }
- 
-//message
-const url= 'mongodb://127.0.0.1:27017';
-
-getallmessagesmodel=(idchat)=>{
-
-return new Promise((res,rej)=>{
-
-
-  mongo.connect(url,(err,client)=>{
-    if(err) throw err
-      const db= client.db('chatapp');
-      
-    db.collection('messages').aggregate([{$lookup:{from:'chat',localField:'chatid',
-    foreignField:'_id',as:'datachatid'}},
-    {$lookup:{from:'users',localField:'datachatid.users',
-    foreignField:'_id',as:'infouser'}}
-  ]).toArray().then((d)=>{
-    let  newarr =[];
-
-    for(let ele of d){
-     if(ele.chatid==idchat){
-       newarr.push(ele)
-     }   
-     
+async function getChat(myid,iduser){
+  const Client=new MongoClient(process.env.Url);
+  try{
+    const Db=Client.db('chatapp');
+    const Coll=await Db.collection('chats');
+    const Data1=await Coll.findOne({users:{$all:[myid,iduser]}});
+    const Data2=await Coll.findOne({users:{$all:[iduser,myid]}});
+    if(Data1||Data2){
+      return Data1._id||Data2._id
     }
-      res(newarr)
-    })
-
-     
-      })//end mongo
-
+    else if(!Data1&&!Data2){
+     const Chat= await Coll.insertOne({users:[myid,iduser]});
+     return Chat.insertedId;
+    }
 
 
-
-}) //end return promise
-       
-
-
-}//end function
+  }
+  catch(e){return e}
+  finally{await Client.close()}
+}//end fun
 
 
-module.exports={getallmessagesmodel}
+async function getChats (iduser){
+  const Client = new MongoClient(process.env.Url);
+  
+  try{
+    const Db= Client.db('chatapp');
+    const Coll=await Db.collection('chats');
+    const pipline=[
+      {$unwind:'$users'},
+      {$match:{users: { $not: { $eq: iduser } }}},
+      {$project:{users:{$toObjectId:'$users'}}},
+      {$lookup:{from:'users',localField:'users',foreignField:'_id',as:'infouser'}},
+      {$project:{users:0}}
+    ];
+    const Data=await Coll.aggregate(pipline).toArray();
+    
+    return Data;
+  }
+  catch(e){return e}
+  finally{await Client.close()}
+} 
+
+
+module.exports={getChats,getChat}
  

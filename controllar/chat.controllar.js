@@ -1,49 +1,29 @@
-const alldatamessage=require('../model/chat.model').getallmessagesmodel
+const {getChat,getChats}=require('../model/chat.model')
+function getallmessages(req,res){
 
-getallmessages=(req,res)=>{
-
-
-   let idchat=req.params.chatid;
-
-   alldatamessage(idchat).then((messages)=>{
-       let mymessage=[];
-       let messagesfriend=[];
-
-    for(let mes of messages){
-   if(mes.sender==req.user.id){
-    mymessage.push(mes);
-   }
-   else{
-    messagesfriend.push(mes);
-
-   }
-
-
-    }
-    console.log(`###############`)
-console.log(mymessage)
-console.log(`###############`)
-console.log(messagesfriend)
-console.log(`###############`)     
-      
-      
-         //res.render('chat',{
-         //chatid:idchat,
-         //mesages:false,
-         //id:req.user.id,
-         //   })
-
-      
-   })
-
+ getChat(req.user.id,req.params.id)
+ .then((d)=>{res.status(200).json({idchat:d})})
+ .catch((e)=>{res.status(403).json(e)})
    
-   
-   
-   // module.getallmessagesmodel(idchat)
 
 
 }//end funcion
 
-module.exports={
-    getallmessages,
+function getChatsControllar(req,res){
+ if(req.user.id){
+    getChats(req.user.id)
+    .then((d)=>{
+      const infoChats=[]
+      for(let i=0;i<d.length;i++){
+          infoChats.push({
+            chatid:d[i]._id,
+            name:d[i].infouser[0].name,
+            userid:d[i].infouser[0]._id,
+          });
+      };
+      res.status(200).json(infoChats)})
+    .catch((e)=>{res.status(403).json({erorr:e})})
+ }
 }
+
+module.exports={getChatsControllar,getallmessages}

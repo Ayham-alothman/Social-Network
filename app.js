@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -10,6 +9,7 @@ app.set('view engine','ejs')
 app.set('views','view')
 
 const dotenv=require('dotenv').config();
+    
 const body=require('body-parser');
    
     //app.use(body.json());
@@ -45,7 +45,8 @@ const profail=require('./router/profail')
 const home=require('./router/home.router')
 const friend=require('./router/friend.router');
 const requests=require('./router/requests.router')
-const chat=require('./router/chat.router')
+const chat=require('./router/chat.router');
+const Messagees=require('./router/messages.router')
 //e require module
 
 //s excute module
@@ -55,16 +56,15 @@ app.use('/login',login)
 app.use('/profail',profail)
 app.use('/friend',friend)
 app.use('/request',requests)
-app.use('/chat',chat)     
-app.use('/try',(req,res)=>{
-    console.log('try');
-    console.log(req.body.id)
-    res.status(200).end();
-    
-})  
-//e excute module
+app.use('/chat',chat)
+app.use('/messages',Messagees);
+app.use((req,res)=>{
+    res.status(403).json({erorr:`do't found`})
+})     
 
-
+// ayham 65df1a0f8f90bca8fa45a446
+// baraa 65df1a1d8f90bca8fa45a447
+// bahaa 65e5b6d79167bd914b657493
 
 const port= 4000;
 
