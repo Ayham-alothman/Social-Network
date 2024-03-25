@@ -144,7 +144,7 @@ async function getFriends(id){
         return dataFriends
 
     }
-    catch(e){return e}
+    catch(e){ throw e}
     finally{await Client.close();}
 }//end fun
 

@@ -40,7 +40,7 @@ async function getChats (iduser){
     
     return Data;
   }
-  catch(e){return e}
+  catch(e){ throw e}
   finally{await Client.close()}
 } 
 

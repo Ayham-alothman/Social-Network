@@ -12,9 +12,9 @@ const dotenv=require('dotenv').config();
     
 const body=require('body-parser');
    
-    //app.use(body.json());
+    app.use(body.json());
 
-app.use(body.urlencoded({extended:true}));
+//app.use(body.urlencoded({extended:true}));
 
 app.use(cors({origin:'*'}))
 
@@ -46,7 +46,9 @@ const home=require('./router/home.router')
 const friend=require('./router/friend.router');
 const requests=require('./router/requests.router')
 const chat=require('./router/chat.router');
-const Messagees=require('./router/messages.router')
+const Messagees=require('./router/messages.router');
+const Post=require('./router/post.router');
+const commint=require('./router/commints.rouer');
 //e require module
 
 //s excute module
@@ -58,8 +60,10 @@ app.use('/friend',friend)
 app.use('/request',requests)
 app.use('/chat',chat)
 app.use('/messages',Messagees);
+app.use('/post',Post);
+app.use('/comment',commint);
 app.use((req,res)=>{
-    res.status(403).json({erorr:`do't found`})
+    res.status(404).json({erorr:`do't found`})
 })     
 
 // ayham 65df1a0f8f90bca8fa45a446

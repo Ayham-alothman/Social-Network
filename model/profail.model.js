@@ -19,7 +19,7 @@ async function getRelation(myid,id){
         }
         return null
     }
-    catch(e){return e}
+    catch(e){ throw e}
     finally{await Client.close();}
 
 

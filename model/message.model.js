@@ -8,7 +8,7 @@ async function getMessages(chatid){
         const data=await Coll.find({chatid:chatid}).toArray();
         if(data){return data}
     }
-    catch(e){return e}
+    catch(e){ throw e}
     finally{await Client.close()}
 }
 
